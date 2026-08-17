@@ -78,3 +78,9 @@ No fix needed for either symptom. Close this investigation. Proceed to **Node 9 
 
 ## Next step (Chat 17)
 Move to Step 3 spec: 8 trigger events writing into `notifications` table per locked type-mapping, Supabase Realtime replication enabled on the table, and `NotificationBell.tsx` wired to fetch + subscribe (replacing the placeholder comment block) using the unread-count query pattern already documented in `Chat16_Node9_ClaudeSpec_SchemaDesign.md`.
+
+## Addendum — false-positive ruled out (same chat, before Step 3 began)
+
+Antigravity flagged a possible `types/index.ts` vs. migration mismatch: claimed `NotificationType` only had 3 of the 8 required values, based on a `Select-String -Context 2,2` grep that truncated the union type's middle lines.
+
+Verified independently by fetching the full raw file from `github.com/ayush22cp008/TableFlow/main/types/index.ts`: **all 8 `NotificationType` values are present and match the SQL CHECK constraint exactly.** `AppNotification` and `AppNotificationRead` types are also correctly defined. No mismatch exists — this was a partial-grep artifact, not a real bug. No fix applied.
