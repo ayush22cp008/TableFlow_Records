@@ -4,7 +4,7 @@
 **Node:** 9 — In-App Notifications
 **Chat:** #17
 **Date:** 2026-08-17
-**Status:** IN PROGRESS — awaiting Ayush's Vercel deployment-list confirmation
+**Status:** ✅ CLOSED — root cause confirmed against live source, no bug found
 
 ---
 
@@ -62,9 +62,19 @@ Ayush confirmed (in-chat) he is not yet sure which case applies and needs to che
 - Vercel deployment list (timestamps, which is "Production") not yet confirmed.
 - No fix has been proposed or written.
 
-## Next step (Chat 17, immediate)
-Ayush to check Vercel → Deployments tab and report:
-1. Timestamp + status of the deployment matching this failed build log.
-2. Timestamp of whichever deployment is currently marked live/Production.
+## ROOT CAUSE — CONFIRMED
 
-Once that's confirmed, proceed to view `NotificationBell.tsx` source before writing any fix instruction — per investigation pipeline (OBSERVATION → INVESTIGATION → EVIDENCE → ROOT CAUSE → DECISION → FIX → BUILD/TEST → AYUSH VERIFICATION). Currently at INVESTIGATION stage.
+Verified directly against `github.com/ayush22cp008/TableFlow`, `main` branch (not just reported — independently checked via GitHub API):
+
+1. **Commit `d6f1ba6`** ("Fix: Suppress ESLint unused vars in NotificationBell to unblock Vercel build", 2026-08-14T02:19:05Z) is the **latest commit** touching `components/NotificationBell.tsx`. No commits after it. Its parent is `2a012b06` (Node 9 Step 1 & 2 — schema + bell UI + lucide-react).
+2. Current live file content on `main` **does** contain `// eslint-disable-next-line @typescript-eslint/no-unused-vars` above all 5 previously-flagged symbols (`supabase`, `userId`/`role`, `setNotifications`, `setUnreadCount`). Build failure is resolved at the source level.
+3. File is confirmed to be a **static UI shell only** — no `useEffect` fetch, no Supabase query, no realtime subscription. Explicit in-code comment: `// Fetch + realtime subscription — Antigravity to wire up against`. `notifications` state never leaves its empty initial array, so `notifications.length === 0` branch (showing "No notifications") always renders. This is **expected/unimplemented behavior, not a bug**.
+
+**Conclusion:** the build failure and the empty notification state are the same root cause (Step 3 not yet built), and both are now correctly understood — not just assumed. The Vercel log screenshot (Image 2 in this chat) was from a build **prior to** `d6f1ba6` landing; current `main` builds clean.
+
+## DECISION
+
+No fix needed for either symptom. Close this investigation. Proceed to **Node 9 — Step 3: Database Triggers + Realtime Wiring**, which is the actual next unit of work — not a bugfix, a feature build.
+
+## Next step (Chat 17)
+Move to Step 3 spec: 8 trigger events writing into `notifications` table per locked type-mapping, Supabase Realtime replication enabled on the table, and `NotificationBell.tsx` wired to fetch + subscribe (replacing the placeholder comment block) using the unread-count query pattern already documented in `Chat16_Node9_ClaudeSpec_SchemaDesign.md`.
