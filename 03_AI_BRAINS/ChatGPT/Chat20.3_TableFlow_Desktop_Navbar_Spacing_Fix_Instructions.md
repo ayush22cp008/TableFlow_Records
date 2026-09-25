@@ -82,29 +82,65 @@ The outer `justify-between` distributes available horizontal space between these
 
 ---
 
-## 4. Required UI Result
+## 4. Exact Required UI Result
 
-Desktop should have a more intentional, compact alignment:
+The desktop Navbar must use a clear **two-side layout**.
 
-```
-TableFlow   Overview   Tables                         Bell   Sign Out
-```
+### LEFT SIDE — Branding only
 
-or, for Customer:
+The left side contains ONLY:
 
-```
-TableFlow   Menu   My Orders   Reservation              Sign Out
-```
+- TF logo
+- TableFlow text
 
-or, for Owner:
+Expected:
 
 ```
-TableFlow   Overview   Menu   Tables   Orders ...       Sign Out
+[TF] TableFlow
 ```
 
-The exact spacing should remain visually balanced and consistent with the existing TableFlow design.
+### RIGHT SIDE — Everything else
 
-Do not force the groups to touch. The requirement is to remove the unnecessary large distributed whitespace while preserving a professional desktop Navbar.
+All remaining desktop controls must be grouped on the right:
+
+- role-appropriate navigation links
+- NotificationBell for Manager/Cook/Waiter
+- Sign Out
+
+Expected structure:
+
+Customer:
+
+```
+[TF] TableFlow                                  Menu  My Orders  Reservation  Sign Out
+```
+
+Manager:
+
+```
+[TF] TableFlow                                  Overview  Tables  Bell  Sign Out
+```
+
+Owner:
+
+```
+[TF] TableFlow                                  Overview  Menu  Tables  Orders  Analytics  AI Insights  Staff  Sign Out
+```
+
+The important visual rule is:
+
+```
+LEFT                                     RIGHT
+[TF] TableFlow       < flexible space >  [Navigation + Bell + Sign Out]
+```
+
+Do NOT place navigation links beside the TableFlow branding.
+
+Do NOT distribute the Logo, navigation, and actions using separate `justify-between` siblings in a way that creates unnecessary internal whitespace.
+
+Within the right-side group, use controlled and consistent gaps so the navigation items and Sign Out look like one coherent action/navigation cluster.
+
+The desktop Navbar should look balanced rather than stretched across the viewport.
 
 ---
 
